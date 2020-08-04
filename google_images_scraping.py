@@ -142,7 +142,4 @@ if __name__ == "__main__":
     parser.add_argument('--thb', required=False, default=False, help='Download thumbnail (True) or large images (False)')
     args = parser.parse_args()
 
-    print(args.search)
-    exit()
-
     launch_scraping(args.search, args.images, args.first, args.thb)
