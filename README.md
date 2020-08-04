@@ -31,7 +31,7 @@ One term and one search.
  ```
 Multiples terms and multiple searches.
 
-## 2. Options
+## 3. Options
 You can specify three options in addition to the search terms.
 
  ```bash
