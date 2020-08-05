@@ -3,6 +3,7 @@ import os
 import requests
 import time
 import argparse
+from urllib import parse
 
 from io import BytesIO
 from PIL import Image
@@ -45,7 +46,7 @@ def save_images(thumbnail_src, target_save_location, i):
         f.write(content)
 
 
-def launch_driver(search):
+def launch_driver():
 
     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
     options = Options()
@@ -56,20 +57,24 @@ def launch_driver(search):
     options.add_argument("--allow-cross-origin-auth-prompt")
 
     driver = webdriver.Chrome(executable_path=chrome_driver_location, options=options)
-    driver.get(f"https://www.google.com/search?q=" + search + "&source=lnms&tbm=isch&sa=X")
+
 
     return driver
 
 def launch_scraping(search_terms, nb_images, first_image, thb):
     # Create directories to save images
     os.makedirs(download_path, exist_ok=True)
+    # Launch driver
+    driver = launch_driver()
 
     for search in search_terms:
         target_save_location = os.path.join(download_path, search.replace(" ", "_"), '')
         os.makedirs(target_save_location, exist_ok=True)
 
-        # Launch driver
-        driver = launch_driver(search)
+        search = parse.quote(search)
+        
+        driver.get(f"https://www.google.com/search?q="+search+"&source=lnms&tbm=isch&sa=X")
+
         more_results_btn = False
 
         for i in range(nb_images):
@@ -99,7 +104,7 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
                     break
 
             # Get thumbnail
-            if thb==True:
+            if thb == 'thumbnail':
                 thumbnail_src = image.get_attribute("src")
                 if thumbnail_src is None:
                     thumbnail_src = image.get_attribute("data-src")
@@ -134,12 +139,14 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
 
                 save_images(src, target_save_location, i)
 
+    driver.close()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Google Images Scraper')
     parser.add_argument('--search', type=str, required=True, help='Search terms (list)', nargs='+')
     parser.add_argument('--images', type=int, required=False, default=600, help='Number of images to download (int)')
     parser.add_argument('--first', type=int, required=False, default=0, help='Position of the first images to download (int)')
-    parser.add_argument('--thb', required=False, default=False, help='Download thumbnail (True) or large images (False)')
+    parser.add_argument('--thb', type=str, required=False, default='thumbnail', help='Download thumbnail (thumbnail) or medium images (medium)')
     args = parser.parse_args()
 
     launch_scraping(args.search, args.images, args.first, args.thb)
