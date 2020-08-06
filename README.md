@@ -1,6 +1,6 @@
-# Google-Images-Scraper
+# Google-Images-Scraper-Python
 
-Google-Images-Scraper allows you to download any images from Google Images.
+Google-Images-Scraper-Python allows you to download any images from Google Images.
 
 ## 1. Installation
 
