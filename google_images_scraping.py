@@ -68,11 +68,13 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
     driver = launch_driver()
 
     for search in search_terms:
-        target_save_location = os.path.join(download_path, search.replace(" ", "_"), '')
+        argssearch = search
+        label = search.replace(" ", "_")
+        target_save_location = os.path.join(download_path, label, '')
         os.makedirs(target_save_location, exist_ok=True)
 
         search = parse.quote(search)
-        
+
         driver.get(f"https://www.google.com/search?q="+search+"&source=lnms&tbm=isch&sa=X")
 
         more_results_btn = False
@@ -81,7 +83,7 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
 
             if i < first_image: continue
 
-            print(i)
+            print('[INFO] {} {}'.format(str(label), str(i)))
 
             # Load more images
             if i%50==0 and i!=0:
@@ -116,10 +118,15 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
 
             # Get large images
             else:
+                image_width = int(image.get_attribute("width"))
+                image_height = int(image.get_attribute("height"))
+
+                if image_width <= 45 and image_height <= 45:
+                    continue
+
                 image.click()
-                right_panel = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'''//*[@data-query="{search}"]''')))
-                # Wait for the first image to be loaded
-                time.sleep(1)
+                right_panel = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'''//*[@data-query="{argssearch}"]''')))
+
                 try:
                     panel_image = right_panel.find_elements_by_xpath('//*[@data-noaft="1"]')[0]
                 except IndexError:
