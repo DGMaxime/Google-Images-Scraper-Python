@@ -24,7 +24,7 @@ def check_b64(source):
         return image_type
     return False
 
-def save_images(thumbnail_src, target_save_location, i):
+def save_images(thumbnail_src, target_save_location, i, label):
     is_b64 = check_b64(thumbnail_src)
     # Base64
     if is_b64:
@@ -42,7 +42,7 @@ def save_images(thumbnail_src, target_save_location, i):
             print('[INFO] Connection aborted!')
             return False
 
-    with open(target_save_location+str(i)+'.'+str(image_format), 'wb') as f:
+    with open(target_save_location+str(label)+'_'+str(i)+'.'+str(image_format), 'wb') as f:
         f.write(content)
 
 
@@ -111,7 +111,8 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
                 if thumbnail_src is None:
                     continue
 
-                save_images(thumbnail_src, target_save_location, i)
+                save_images(thumbnail_src, target_save_location, i, label)
+
 
             # Get large images
             else:
@@ -137,7 +138,7 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
                 if src is None:
                     continue
 
-                save_images(src, target_save_location, i)
+                save_images(src, target_save_location, i, label)
 
     driver.close()
 
