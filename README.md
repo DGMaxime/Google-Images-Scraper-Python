@@ -1,12 +1,12 @@
-# Google-Images-Scraper
+# Google-Images-Scraper-Python
 
-Google-Images-Scraper allows you to download any images from Google Images.
+Google-Images-Scraper-Python allows you to download any images from Google Images.
 
 ## 1. Installation
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/DGMaxime/Google-Images-Scraper.git
+   git clone https://github.com/DGMaxime/Google-Images-Scraper-Python.git
    ```
 2. Install the required packages
    ```bash
