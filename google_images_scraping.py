@@ -57,7 +57,7 @@ def launch_driver():
     options.add_argument("--allow-cross-origin-auth-prompt")
 
     driver = webdriver.Chrome(executable_path=chrome_driver_location, options=options)
-
+    driver.maximize_window() # Necessary
 
     return driver
 
@@ -118,9 +118,9 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
 
             # Get large images
             else:
+                # Jump over the related searches by checking images size
                 image_width = int(image.get_attribute("width"))
                 image_height = int(image.get_attribute("height"))
-
                 if image_width <= 45 and image_height <= 45:
                     continue
 
