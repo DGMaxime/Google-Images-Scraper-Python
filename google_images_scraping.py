@@ -55,6 +55,8 @@ def launch_driver():
     options.add_argument("--disable-web-security")
     options.add_argument("--allow-running-insecure-content")
     options.add_argument("--allow-cross-origin-auth-prompt")
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--ignore-ssl-errors')
 
     driver = webdriver.Chrome(executable_path=chrome_driver_location, options=options)
     driver.maximize_window() # Necessary
