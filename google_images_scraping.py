@@ -48,10 +48,10 @@ def save_images(thumbnail_src, target_save_location, i, label):
 
 def launch_driver():
 
-    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
+    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
     options = Options()
-    #options.add_argument("--headless")
     options.add_argument(f'user-agent={user_agent}')
+    options.add_argument('headless')
     options.add_argument("--disable-web-security")
     options.add_argument("--allow-running-insecure-content")
     options.add_argument("--allow-cross-origin-auth-prompt")
@@ -106,6 +106,9 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
                 else:
                     print('[INFO] NO MORE IMAGES !')
                     break
+            except:
+                continue
+
 
             # Get thumbnail
             if thb == 'thumbnail':
@@ -126,8 +129,11 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
                 if image_width <= 45 and image_height <= 45:
                     continue
 
-                image.click()
-                right_panel = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'''//*[@data-query="{argssearch}"]''')))
+                try:
+                    image.click()
+                    right_panel = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f'''//*[@data-query="{argssearch}"]''')))
+                except:
+                    continue
 
                 try:
                     panel_image = right_panel.find_elements_by_xpath('//*[@data-noaft="1"]')[0]
@@ -139,7 +145,11 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
                 image_finder_xp = f'//*[@class="{magic_class}"]'
 
                 # [-2] element is the element currently displayed
-                target = driver.find_elements_by_xpath(image_finder_xp)[-2]
+                try:
+                    target = driver.find_elements_by_xpath(image_finder_xp)[-2]
+                except IndexError:
+                    print('[INFO] IndexError: list index out of range')
+                    continue
 
                 src = target.get_attribute("src")
                 if src is None:
@@ -154,9 +164,9 @@ def launch_scraping(search_terms, nb_images, first_image, thb):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Google Images Scraper')
     parser.add_argument('--search', type=str, required=True, help='Search terms (list)', nargs='+')
-    parser.add_argument('--images', type=int, required=False, default=600, help='Number of images to download (int)')
+    parser.add_argument('--images', type=int, required=False, default=60, help='Number of images to download (int)')
     parser.add_argument('--first', type=int, required=False, default=0, help='Position of the first images to download (int)')
-    parser.add_argument('--thb', type=str, required=False, default='thumbnail', help='Download thumbnail (thumbnail) or medium images (medium)')
+    parser.add_argument('--thb', type=str, required=False, default='medium', help='Download thumbnail (thumbnail) or medium images (medium)')
     args = parser.parse_args()
 
     launch_scraping(args.search, args.images, args.first, args.thb)
